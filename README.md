@@ -13,8 +13,6 @@ a minimal, git-compatible object storage and protocol engine written in posix c.
 - [x] `commit` — construct commit object with automatic tree & parent sha resolution
 - [x] `remote` — configure remote repository URLs (`remote add`)
 - [x] `push` — send local commits & packfiles to remote via smart http (`git-receive-pack`)
-- [x] `pkt-encode` — frame data into git packet-line format
-- [x] `pkt-decode` — parse git packet-line stream
 - [x] `serve-refs` — ref advertisement server for `upload-pack`
 
 ## building and installation

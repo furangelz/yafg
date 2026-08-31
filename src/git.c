@@ -1135,7 +1135,6 @@ index_write_tree(const char *repo, char *out_hex)
 	int res = index_write_tree_prefix(repo, &idx, "", out_hex);
 	index_free(&idx);
 
-	/* remove yafg's text index so git doesn't choke on it */
 	char idx_path[1024];
 	snprintf(idx_path, sizeof(idx_path), "%s/.git/index", repo ? repo : ".");
 	unlink(idx_path);

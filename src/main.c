@@ -32,8 +32,6 @@ usage(void)
 		"  commit [-m <msg>] [-p <parent>] [<tree>]\n"
 		"  remote add <name> <url>\n"
 		"  push [<remote>] [<branch>]\n"
-		"  pkt-encode <string>\n"
-		"  pkt-decode\n"
 		"  serve-refs [<path>]\n");
 	exit(1);
 }
@@ -44,7 +42,6 @@ cmd_init(int argc, char **argv)
 	const char *path = argc > 0 ? argv[0] : ".";
 	if (repo_init(path) < 0)
 		die("failed to initialize repository at '%s'", path);
-	printf("Initialized empty Git repository in %s/.git/\n", path);
 	return 0;
 }
 
@@ -64,10 +61,8 @@ cmd_clone(int argc, char **argv)
 	const char *url = argv[0];
 	const char *dir = argc > 1 ? argv[1] : NULL;
 
-	printf("Cloning repository '%s'...\n", url);
 	if (clone_repo(url, dir) < 0)
 		die("failed to clone repository");
-	printf("Cloned successfully.\n");
 	return 0;
 }
 
@@ -209,36 +204,11 @@ cmd_push(int argc, char **argv)
 	const char *remote = argc > 0 ? argv[0] : "origin";
 	const char *branch = argc > 1 ? argv[1] : "main";
 
-	printf("Pushing to remote '%s' branch '%s'...\n", remote, branch);
 	if (push_repo(".", remote, branch) < 0)
 		die("failed to push to remote '%s'", remote);
-	printf("Push successful.\n");
 	return 0;
 }
 
-static int
-cmd_pkt_encode(int argc, char **argv)
-{
-	if (argc < 1) usage();
-	pkt_write_str(STDOUT_FILENO, argv[0]);
-	return 0;
-}
-
-static int
-cmd_pkt_decode(int argc, char **argv)
-{
-	char buf[65536];
-	int len;
-	(void)argc; (void)argv;
-
-	while ((len = pkt_read(STDIN_FILENO, buf, sizeof(buf))) >= 0) {
-		if (len == 0)
-			puts("[PKT-FLUSH]");
-		else
-			printf("[PKT-LINE %d bytes] %s\n", len, buf);
-	}
-	return 0;
-}
 
 static int
 cmd_serve_refs(int argc, char **argv)
@@ -261,8 +231,6 @@ main(int argc, char **argv)
 		return cmd_commit(argc - 2, argv + 2);
 	if (!strcmp(argv[1], "remote"))      return cmd_remote(argc - 2, argv + 2);
 	if (!strcmp(argv[1], "push"))        return cmd_push(argc - 2, argv + 2);
-	if (!strcmp(argv[1], "pkt-encode"))  return cmd_pkt_encode(argc - 2, argv + 2);
-	if (!strcmp(argv[1], "pkt-decode"))  return cmd_pkt_decode(argc - 2, argv + 2);
 	if (!strcmp(argv[1], "serve-refs"))  return cmd_serve_refs(argc - 2, argv + 2);
 
 	usage();
