@@ -27,6 +27,7 @@ a minimal, git-compatible object storage and protocol engine written in posix c.
 
 ### compilation
 ```bash
+cd src
 make
 doas make install
 ```
